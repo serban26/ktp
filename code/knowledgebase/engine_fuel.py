@@ -1,0 +1,93 @@
+SYMPTOMS_ENGINE_FUEL = [
+    {
+        "id": "fuel_level_low",
+        "question": "Is the fuel level often very low or close to empty when you experience problems? (yes/no)",
+    },
+    {
+        "id": "poor_acceleration",
+        "question": "Does the car accelerate more slowly than usual, even with more throttle? (yes/no)",
+    },
+    {
+        "id": "hesitation_under_load",
+        "question": "Does the engine hesitate or stumble when accelerating or climbing hills? (yes/no)",
+    },
+    {
+        "id": "misfire_under_accel",
+        "question": "Do you feel the engine misfire or jerk during acceleration? (yes/no)",
+    },
+    {
+        "id": "black_smoke_exhaust",
+        "question": "Do you see dark or black smoke from the exhaust when accelerating? (yes/no)",
+    },
+    {
+        "id": "fuel_consumption_high",
+        "question": "Has fuel consumption increased noticeably without a change in driving style? (yes/no)",
+    },
+    {
+        "id": "hard_start_hot",
+        "question": "Is the engine harder to start when it is hot than when it is cold? (yes/no)",
+    },
+    {
+        "id": "fuel_filter_old",
+        "question": "Has the fuel filter not been replaced for a long time (or you do not know when)? (yes/no)",
+    },
+]
+
+RULES_ENGINE_FUEL = [
+    {
+        "id": "fuel_starvation_low_fuel",
+        "conditions": {
+            "fuel_level_low": True,
+            "hesitation_under_load": True,
+        },
+        "system": "engine_fuel",
+        "severity": "medium",
+        "diagnosis": "Low fuel level with hesitation under load can indicate fuel starvation, especially in corners or on hills.",
+        "advice": "Avoid running the tank very low and refuel. If the problem remains, have the fuel pick-up and pump checked.",
+    },
+    {
+        "id": "clogged_fuel_filter",
+        "conditions": {
+            "hesitation_under_load": True,
+            "poor_acceleration": True,
+            "fuel_filter_old": True,
+        },
+        "system": "engine_fuel",
+        "severity": "medium",
+        "diagnosis": "Hesitation and poor acceleration with an old fuel filter suggest restricted fuel flow.",
+        "advice": "Replacing the fuel filter is a relatively simple maintenance step that may restore performance.",
+    },
+    {
+        "id": "rich_mixture_black_smoke",
+        "conditions": {
+            "black_smoke_exhaust": True,
+            "fuel_consumption_high": True,
+        },
+        "system": "engine_fuel",
+        "severity": "medium",
+        "diagnosis": "Black exhaust smoke and high fuel consumption indicate a rich fuel mixture.",
+        "advice": "Have the engine management system checked for sensor faults or leaking injectors to avoid damage to the catalytic converter.",
+    },
+    {
+        "id": "hot_start_vapour_lock",
+        "conditions": {
+            "hard_start_hot": True,
+            "fuel_level_low": False,
+        },
+        "system": "engine_fuel",
+        "severity": "low",
+        "diagnosis": "Difficult hot starts with normal fuel level can be caused by fuel vapour or weak fuel pressure.",
+        "advice": "Mention the hot-start behaviour to a mechanic; checking fuel pressure and injector leakage may be necessary.",
+    },
+    {
+        "id": "injector_misfire",
+        "conditions": {
+            "misfire_under_accel": True,
+            "warning_check_engine": True,
+        },
+        "system": "engine_fuel",
+        "severity": "medium",
+        "diagnosis": "Misfire during acceleration with a check engine light suggests injector or mixture problems on one or more cylinders.",
+        "advice": "Avoid heavy acceleration and have the fault codes read to identify which cylinder is affected.",
+    },
+]

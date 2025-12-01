@@ -1,0 +1,62 @@
+SYMPTOMS_STEERING_SUSPENSION = [
+    {
+        "id": "clunk_over_bumps",
+        "question": "Do you hear clunking or knocking noises from the suspension when driving over bumps? (yes/no)",
+    },
+    {
+        "id": "steering_loose",
+        "question": "Does the steering wheel feel loose with free play before the wheels respond? (yes/no)",
+    },
+    {
+        "id": "steering_heavy",
+        "question": "Does the steering feel heavier than usual, especially at low speeds? (yes/no)",
+    },
+    {
+        "id": "car_pulls_straight_line",
+        "question": "When driving in a straight line on a level road, does the car pull to one side? (yes/no)",
+    },
+]
+
+RULES_STEERING_SUSPENSION = [
+    {
+        "id": "worn_suspension_bushes",
+        "conditions": {
+            "clunk_over_bumps": True,
+        },
+        "system": "steering_suspension",
+        "severity": "medium",
+        "diagnosis": "Noises over bumps suggest worn suspension bushes or joints.",
+        "advice": "Worn suspension parts can affect handling and tyre wear. Have the suspension inspected.",
+    },
+    {
+        "id": "steering_play_issue",
+        "conditions": {
+            "steering_loose": True,
+        },
+        "system": "steering_suspension",
+        "severity": "high",
+        "diagnosis": "Loose steering with free play can indicate worn steering links or rack.",
+        "advice": "Loose steering reduces control of the vehicle. Have the steering system checked soon.",
+    },
+    {
+        "id": "power_steering_problem",
+        "conditions": {
+            "steering_heavy": True,
+            "vibration_high_speed": False,
+        },
+        "system": "steering_suspension",
+        "severity": "medium",
+        "diagnosis": "Heavy steering without vibration can indicate a power steering pump, belt, or fluid problem.",
+        "advice": "Check the power steering fluid level and have the system inspected if the problem persists.",
+    },
+    {
+        "id": "alignment_pull",
+        "conditions": {
+            "car_pulls_straight_line": True,
+        },
+        "system": "steering_suspension",
+        "severity": "medium",
+        "diagnosis": "Pulling in a straight line is often caused by wheel alignment or tyre pressure differences.",
+        "advice": "Check tyre pressures and ask for an alignment check at the next opportunity.",
+    },
+]

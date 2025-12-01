@@ -1,0 +1,135 @@
+CAR_SYSTEMS = [
+    {"id": "battery_charging", "name": "Battery and charging system"},
+    {"id": "starting_system", "name": "Starting system"},
+    {"id": "engine_mechanical", "name": "Engine mechanical components"},
+    {"id": "engine_fuel", "name": "Fuel delivery and injection"},
+    {"id": "engine_air_intake", "name": "Air intake system"},
+    {"id": "engine_ignition", "name": "Ignition system"},
+    {"id": "brake_hydraulic", "name": "Brake hydraulic system"},
+    {"id": "brake_mechanical", "name": "Brake mechanical components"},
+    {"id": "cooling_system", "name": "Engine cooling system"},
+    {"id": "wheel_tyre_system", "name": "Wheels and tyres"},
+    {"id": "steering_suspension", "name": "Steering and suspension"},
+    {"id": "transmission_clutch", "name": "Transmission and clutch"},
+    {"id": "body_lighting_electrical", "name": "Body lighting and electrics"},
+    {"id": "climate_ac", "name": "Climate control and AC"},
+]
+
+SYMPTOMS_GENERAL = [
+    {
+        "id": "engine_cranks",
+        "question": "When you try to start the car, does the engine crank or turn over? (yes/no)",
+    },
+    {
+        "id": "dashboard_lights_bright",
+        "question": "When the ignition is on, are the dashboard lights bright and normal? (yes/no)",
+    },
+    {
+        "id": "warning_battery_light",
+        "question": "Is the battery/charging system warning light on while driving? (yes/no)",
+    },
+    {
+        "id": "warning_check_engine",
+        "question": "Is the check engine warning light on while driving? (yes/no)",
+    },
+    {
+        "id": "check_engine_flashing",
+        "question": "Does the check engine light flash while driving (not just stay on)? (yes/no)",
+    },
+    {
+        "id": "engine_stalls_idle",
+        "question": "Does the engine sometimes stall or cut out while idling? (yes/no)",
+    },
+    {
+        "id": "engine_runs_rough_idle",
+        "question": "Does the engine run rough or uneven when idling? (yes/no)",
+    },
+    {
+        "id": "hard_start_cold",
+        "question": "Is the car especially hard to start when the engine is cold? (yes/no)",
+    },
+    {
+        "id": "smell_fuel_engine_bay",
+        "question": "Do you sometimes smell fuel around the engine bay? (yes/no)",
+    },
+]
+
+RULES_GENERAL = [
+    {
+        "id": "battery_issue",
+        "conditions": {
+            "engine_cranks": False,
+            "dashboard_lights_bright": False,
+        },
+        "system": "battery_charging",
+        "severity": "high",
+        "diagnosis": "Likely battery or battery connection problem.",
+        "advice": "Do not attempt to keep starting the car. Check battery terminals and call roadside assistance or a garage.",
+    },
+    {
+        "id": "starter_issue",
+        "conditions": {
+            "engine_cranks": False,
+            "dashboard_lights_bright": True,
+        },
+        "system": "starting_system",
+        "severity": "medium",
+        "diagnosis": "Possible starter motor or ignition circuit issue.",
+        "advice": "The electrical system appears to have power but the engine does not crank. It is safer to have the car inspected by a mechanic.",
+    },
+    {
+        "id": "alternator_issue",
+        "conditions": {
+            "warning_battery_light": True,
+            "engine_cranks": True,
+        },
+        "system": "battery_charging",
+        "severity": "high",
+        "diagnosis": "Possible alternator or charging system problem.",
+        "advice": "A battery warning light while driving often indicates that the alternator is not charging correctly. Limit driving and have the charging system checked soon.",
+    },
+    {
+        "id": "engine_control_fault",
+        "conditions": {
+            "engine_cranks": True,
+            "warning_check_engine": True,
+        },
+        "system": "engine_ignition",
+        "severity": "medium",
+        "diagnosis": "Engine control system has detected a fault.",
+        "advice": "The car may still be drivable, but avoid hard acceleration and have the fault code read at a garage as soon as possible.",
+    },
+    {
+        "id": "rough_idle_general",
+        "conditions": {
+            "engine_runs_rough_idle": True,
+            "warning_check_engine": True,
+        },
+        "system": "engine_fuel",
+        "severity": "medium",
+        "diagnosis": "Engine runs rough at idle, possibly due to mixture or ignition issues.",
+        "advice": "Avoid high engine loads and have the engine checked for stored fault codes and basic maintenance.",
+    },
+    {
+        "id": "cold_start_battery_weak",
+        "conditions": {
+            "hard_start_cold": True,
+            "dashboard_lights_bright": False,
+        },
+        "system": "battery_charging",
+        "severity": "medium",
+        "diagnosis": "Battery may be weak, especially at low temperatures.",
+        "advice": "A weak battery can struggle in cold weather. Consider having the battery tested and replaced if necessary.",
+    },
+    {
+        "id": "fuel_leak_risk",
+        "conditions": {
+            "smell_fuel_engine_bay": True,
+            "engine_cranks": True,
+        },
+        "system": "engine_fuel",
+        "severity": "high",
+        "diagnosis": "Smell of fuel near the engine bay suggests a possible fuel leak.",
+        "advice": "Do not ignore fuel smells in the engine bay. Avoid driving long distances and have the fuel system inspected soon.",
+    },
+]
