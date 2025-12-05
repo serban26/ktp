@@ -1,65 +1,88 @@
-# Car Diagnosis Helper - Knowledge-Based Car Troubleshooter
+# Car Diagnosis Helper – Knowledge-Based Car Troubleshooter
 
 ## Overview
 
 Car Diagnosis Helper is a small but complete knowledge-based system that helps car owners reason about simple car problems based on observable symptoms. The system asks a structured series of questions and uses explicit rules to suggest likely causes and possible next steps.
 
 The goal is not to replace a professional mechanic, but to support car owners in:
+
 - deciding whether it is likely safe to keep driving, and  
 - having a clearer description of the problem when contacting a garage.
 
-The core knowledge comes from an experienced car mechanic and is stored in a modular Python knowledge base. Each car subsystem (brakes, cooling, ignition, fuel, wheels, steering, etc.) has its own file defining symptoms and rules, which are aggregated into one unified knowledge base for inference.
+The core knowledge comes from an experienced car mechanic and is stored in a **modular JSON knowledge base**. Each car subsystem (brakes, cooling, ignition, fuel, wheels, steering, etc.) has its own JSON file with symptoms and rules, which are aggregated into one unified knowledge base for inference.
+
+Across all subsystems, the system currently contains a little over 100 knowledge elements (symptoms + rules), which is within the guideline for this project.
 
 ## Running the system
 
 Requirements:
 
-- Python 3.13 or higher
+- Python 3.10+ (we tested with Python 3.13.2)
+- No external dependencies (standard library only)
 
 Steps:
 
-1. Clone this repository.
-2. In the project directory, run:
+1. From the project root, run:
 
    ```bash
    python code/main.py
    ```
 
-3. Answer the questions with `yes`, `no`, or press `Enter` to skip if you are unsure.
-4. At the end, the system will display one or more possible issues and suggested next steps, ordered roughly by severity and grouped by subsystem.
+2. Answer the questions with `yes`, `no`, or press `Enter` to skip if you are unsure.
+3. At the end, the system will display one or more possible issues and suggested next steps.
 
 ## Project structure
 
 All source code lives in the `code/` directory:
 
-- `code/main.py` - entry point that starts an interactive diagnosis session in the console.
-- `code/inference.py` - inference engine that matches user answers to rules and produces diagnoses.
-- `code/knowledge_base/` - modular knowledge base package:
-  - `__init__.py` - aggregates all symptom and rule sets into flat `SYMPTOMS` and `RULES` lists without duplicates.
-  - `general.py` - shared `CAR_SYSTEMS` list and general symptoms/rules that cut across subsystems.
-  - `engine_ignition.py` - ignition-related symptoms and rules (e.g. misfires, no-start with spark issues).
-  - `engine_fuel.py` - fuel delivery and injection symptoms and rules (e.g. rich mixture, hesitation).
-  - `engine_mechanical.py` - mechanical engine symptoms and rules (e.g. knocking, compression-related behaviour).
-  - `cooling.py` - coolant and overheating-related symptoms and rules (e.g. high temperature, sweet smell).
-  - `brakes.py` - brake system symptoms and rules (hydraulic and mechanical).
-  - `wheels.py` - wheels and tyre-related symptoms and rules (vibration, uneven wear).
-  - `steering_suspension.py` - steering and suspension symptoms and rules (pulling, clunks over bumps).
-  - `transmission.py` - transmission and clutch symptoms and rules (slipping, gear engagement problems).
-  - `climate_ac.py` - climate control and air conditioning symptoms and rules.
-  - `electrical_lighting.py` - lighting and basic electrical symptoms and rules.
+- `code/main.py` – entry point that starts an interactive diagnosis session in the console.
+- `code/inference.py` – inference engine that matches user answers to rules and prints diagnoses.
+- `code/knowledge_base.py` – loader and aggregator that reads the JSON knowledge base and exposes:
+  - `CAR_SYSTEMS` – list of car subsystems (battery/charging, brakes, cooling, etc.).
+  - `SYMPTOMS` – flat list of all symptom objects from all JSON files.
+  - `RULES` – flat list of all rule objects from all JSON files.
+- `code/kb_data/` – JSON knowledge base:
+  - `general.json` – subsystem list (`systems`) and general symptoms/rules that cut across subsystems.
+  - `brakes.json` – brake symptoms and rules.
+  - `climate_ac.json` – climate control and A/C symptoms and rules.
+  - `cooling.json` – engine cooling symptoms and rules.
+  - `electrical_lighting.json` – basic electrical and lighting symptoms and rules.
+  - `engine_fuel.json` – fuel delivery and injection symptoms and rules.
+  - `engine_ignition.json` – ignition-related symptoms and rules.
+  - `engine_mechanical.json` – mechanical engine symptoms and rules.
+  - `steering_suspension.json` – steering and suspension symptoms and rules.
+  - `transmission.json` – transmission and clutch symptoms and rules.
+  - `wheels.json` – wheel and tyre symptoms and rules.
+- `requirements.txt` – Python dependencies file (currently empty; included to satisfy project requirements).
 
-The knowledge base modules only contain declarative data structures (symptoms, rules and car system identifiers). All procedural code for asking questions and performing inference lives in `main.py` and `inference.py`.
+The JSON files contain only declarative knowledge (symptoms, rules, subsystem identifiers). All procedural code for asking questions and performing inference lives in `main.py`, `inference.py`, and `knowledge_base.py`.
 
 ## Knowledge representation
 
+### Car systems
+
+Subsystem identifiers and human-readable names are stored in `kb_data/general.json` under the key `systems`. For example:
+
+```json
+{
+  "systems": [
+    { "id": "battery_charging", "name": "Battery and charging system" },
+    { "id": "starting_system", "name": "Starting system" },
+    { "id": "brake_hydraulic", "name": "Brake hydraulic system" }
+  ]
+}
+```
+
+These identifiers are referenced by rules so that each diagnosis is linked to the relevant part of the car.
+
 ### Symptoms
 
-Symptoms are small dictionaries with an `id` and a natural-language `question`, for example:
+Symptoms are stored in each JSON file as small objects with an `id` and a natural-language `question`. Example:
 
-```python
+```json
 {
-    "id": "engine_cranks",
-    "question": "When you try to start the car, does the engine crank or turn over? (yes/no)",
+  "id": "engine_cranks",
+  "question": "When you try to start the car, does the engine crank or turn over? (yes/no)"
 }
 ```
 
@@ -67,71 +90,68 @@ Each symptom is designed to be observable without tools by an average driver (st
 
 ### Rules
 
-Rules are dictionaries with:
+Rules are stored in JSON as objects with:
 
-- `id` - unique rule identifier,
-- `conditions` - mapping from symptom ids to expected boolean values,
-- `system` - affected car subsystem identifier (from `CAR_SYSTEMS`),
-- `severity` - one of `low`, `medium`, `high`, `critical`,
-- `diagnosis` - short sentence summarising the likely cause,
-- `advice` - short, actionable follow-up recommendation.
+- `id` – unique rule identifier,
+- `conditions` – mapping from symptom ids to expected boolean values (`true` / `false`),
+- `system` – affected car subsystem identifier (from `systems` in `general.json`),
+- `diagnosis` – short sentence summarising the likely cause,
+- `advice` – short, actionable follow-up recommendation.
 
 Example:
 
-```python
+```json
 {
-    "id": "battery_issue",
-    "conditions": {
-        "engine_cranks": False,
-        "dashboard_lights_bright": False,
-    },
-    "system": "battery_charging",
-    "severity": "high",
-    "diagnosis": "Likely battery or battery connection problem.",
-    "advice": "Do not attempt to keep starting the car. Check battery terminals and call roadside assistance or a garage.",
+  "id": "battery_issue",
+  "conditions": {
+    "engine_cranks": false,
+    "dashboard_lights_bright": false
+  },
+  "system": "battery_charging",
+  "diagnosis": "Likely battery or battery connection problem.",
+  "advice": "Do not keep trying to start the car. Check battery terminals and call roadside assistance or a garage."
 }
 ```
 
-Across all modules, the system currently contains on the order of 80-100 knowledge elements (symptoms and rules combined), covering common scenarios in starting, braking, cooling, steering, suspension, transmission, electrical and engine management.
+Each subsystem file adds its own set of symptoms and rules; the aggregator combines them into a single view for the inference engine.
 
-### Aggregation
+## Aggregation and inference
 
-The aggregator in `code/knowledge_base/__init__.py` collects all symptom and rule lists from the subsystem modules and builds deduplicated `SYMPTOMS` and `RULES` lists that are used by the inference engine:
+### Loading and aggregation
 
-```python
-SYMPTOMS = []
-_seen_symptom_ids = set()
-for group in SYMPTOM_SOURCES:
-    for symptom in group:
-        symptom_id = symptom["id"]
-        if symptom_id not in _seen_symptom_ids:
-            SYMPTOMS.append(symptom)
-            _seen_symptom_ids.add(symptom_id)
-```
+`code/knowledge_base.py` reads all JSON files in `kb_data/`. It:
 
-The same pattern is used for `RULES`, ensuring no duplicate ids across files.
+- loads `systems`, `symptoms`, and `rules` from `general.json`,
+- loads `symptoms` and `rules` from each of the subsystem files,
+- merges them into global `SYMPTOMS` and `RULES` lists,
+- removes duplicates based on `id` so that each symptom and rule appears only once.
 
-## Inference
+This loader does not contain any hard-coded rules itself; all knowledge is read from the JSON files.
 
-The inference engine treats user answers as observed facts and performs simple data-driven matching, similar to forward chaining:
+### Asking questions and collecting observations
 
-1. The system iterates through all symptoms in `SYMPTOMS` and asks their questions.
-2. Answers are stored as a mapping from symptom id to:
-   - `True` for `yes`,
-   - `False` for `no`,
-   - `None` for skipped/unknown.
-3. A rule is considered a match if all of its conditions are satisfied by the observed answers. Unknown answers never cause a rule to fire or be rejected.
-4. All matching rules are collected and typically sorted by severity (critical issues first) and by subsystem before being shown to the user.
+`code/inference.py` iterates over all entries in `SYMPTOMS` and asks the user each question in order. Answers are stored in a dictionary:
 
-This behaviour corresponds to a simple forward-style inference: the system starts from user-provided facts and derives all rules whose conditions fit those facts.
+- `True` for “yes”,
+- `False` for “no”,
+- `None` for skipped/unknown (when the user presses Enter).
 
-## Files
+### Rule matching
 
-- `code/main.py` - interactive command-line dialogue and printing of diagnoses.
-- `code/inference.py` - inference logic for matching answers to rules.
-- `code/knowledge_base/__init__.py` - aggregated symptom and rule lists.
-- `code/knowledge_base/*.py` - subsystem-specific knowledge modules.
-- `requirements.txt` - Python dependencies (currently empty; the standard library is sufficient for this version).
+For each rule in `RULES`, the inference engine checks whether the rule’s conditions are compatible with the observed answers:
+
+- If a condition refers to a symptom the user **skipped** (`None`), that condition is ignored for that rule.
+- If a condition refers to a symptom that the user answered, and the answer contradicts the expected value, the rule does **not** match.
+- If at least one condition is supported by an explicit answer and none of the answered conditions contradict the rule, the rule is considered a match and its diagnosis is shown.
+
+In other words, skipped questions do not directly influence the result: only questions that the user actually answered are used to accept or reject rules.
+
+### Result presentation
+
+All rules that match the user’s answers are collected and shown back to the user in a simple list. For each match, the system prints:
+
+- the `diagnosis` (likely cause),
+- the `advice` (concrete next step or safety recommendation).
 
 ## Limitations and future work
 
@@ -139,13 +159,11 @@ Current limitations:
 
 - The rule base covers only a subset of all possible car faults and focuses on common, generic scenarios.
 - The question order is fixed and not yet adaptive to previous answers.
-- There is no probabilistic reasoning or ranking beyond simple severity ordering.
-- There is no explicit explanation component that shows which rules fired and why.
+- There is no explicit explanation component that shows which exact rules fired and why.
+- Skipping many questions may prevent some rules from matching, because at least one condition must be supported by an explicit answer.
 
 Planned improvements:
 
 - Extend the knowledge base with more detailed patterns from additional expert interviews.
 - Introduce adaptive questioning that only asks questions relevant to still-possible diagnoses.
-- Make severity and advice more fine-grained (e.g. explicit safety levels).
-- Add automated tests for scenarios and rule coverage.
-- Explore a graphical or web-based front-end that uses the same knowledge base and inference engine.
+- Explore a graphical or web-based front-end that uses the same JSON knowledge base and inference engine.

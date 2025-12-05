@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from knowledge_base import SYMPTOMS, RULES
 
@@ -16,23 +16,28 @@ def ask_yes_no(question: str) -> bool | None:
 
 
 def collect_observations() -> Dict[str, bool | None]:
-    print("I will ask a few short questions about your car.")
-    print("If you are not sure about a question, just press Enter to skip it.")
     observations: Dict[str, bool | None] = {}
+    print("Please answer the following questions about your car.")
+    print()
     for symptom in SYMPTOMS:
-        answer = ask_yes_no(symptom["question"])
-        observations[symptom["id"]] = answer
+        symptom_id = symptom["id"]
+        question = symptom["question"]
+        answer = ask_yes_no(question)
+        observations[symptom_id] = answer
     return observations
 
 
 def rule_matches(rule: Dict[str, Any], observations: Dict[str, bool | None]) -> bool:
-    for key, expected in rule["conditions"].items():
-        value = observations.get(key)
+    conditions: Dict[str, Any] = rule.get("conditions", {})
+    any_checked = False
+    for symptom_id, expected in conditions.items():
+        value = observations.get(symptom_id)
         if value is None:
+            continue
+        any_checked = True
+        if bool(value) != bool(expected):
             return False
-        if value is not expected:
-            return False
-    return True
+    return any_checked
 
 
 def infer_diagnoses(observations: Dict[str, bool | None]) -> List[Dict[str, Any]]:
@@ -46,16 +51,25 @@ def infer_diagnoses(observations: Dict[str, bool | None]) -> List[Dict[str, Any]
 def run_session() -> None:
     print("Welcome to the Car Diagnosis Helper.")
     print("This tool cannot replace a professional mechanic,")
-    print("but it can help you think about possible causes and next steps.\n")
+    print("but it can help you think about possible causes and next steps.")
+    print()
     observations = collect_observations()
-    print("\nThank you. Reasoning about your answers...\n")
+    print()
+    print("Thank you. Reasoning about your answers...")
+    print()
     matches = infer_diagnoses(observations)
     if not matches:
         print("I could not find a clear likely cause based on the given information.")
         print("If you are worried about safety, do not drive the car and contact a professional mechanic.")
         return
-    print("Possible issues based on your answers:\n")
+    print("Possible issues based on your answers:")
+    print()
     for i, rule in enumerate(matches, start=1):
         print(f"{i}. {rule['diagnosis']}")
-        print(f"   Suggested next step: {rule['advice']}\n")
+        print(f"   Suggested next step: {rule['advice']}")
+        print()
     print("Remember: this is only a support tool. When in doubt, consult a professional mechanic.")
+
+
+if __name__ == "__main__":
+    run_session()
