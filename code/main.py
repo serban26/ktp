@@ -107,10 +107,9 @@ def main() -> None:
         description = system.get("description", "")
         col = cols[i % len(cols)]
         with col:
-            st.markdown(f"**{name}**")
+            st.checkbox(name, key=f"sys_{system['id']}")
             if description:
                 st.caption(description)
-            st.checkbox("Include", key=f"sys_{system['id']}")
 
     st.markdown("---")
 
