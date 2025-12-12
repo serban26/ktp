@@ -25,7 +25,7 @@ Steps:
 1. From the project root, run:
 
    ```bash
-   python code/main.py
+   streamlit run main.py
    ```
 
 2. Answer the questions with `yes`, `no`, or press `Enter` to skip if you are unsure.
