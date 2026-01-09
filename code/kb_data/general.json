@@ -97,81 +97,76 @@
   ],
   "rules": [
     {
-      "id": "battery_issue",
+      "id": "battery_issue_no_crank_dim_lights",
       "conditions": {
         "engine_cranks": false,
         "dashboard_lights_bright": false
       },
       "system": "battery_charging",
       "severity": "high",
-      "diagnosis": "Likely battery or battery connection problem.",
-      "advice": "Do not attempt to keep starting the car. Check battery terminals and call roadside assistance or a garage."
+      "diagnosis": "Engine does not crank and dashboard lights are dim, suggesting a weak battery or bad battery connection.",
+      "advice": "Do not keep trying to start repeatedly. Check battery terminals if safe, and consider calling roadside assistance or jump-starting."
     },
     {
-      "id": "starter_issue",
+      "id": "starter_issue_no_crank_bright_lights",
       "conditions": {
         "engine_cranks": false,
         "dashboard_lights_bright": true
       },
       "system": "starting_system",
       "severity": "medium",
-      "diagnosis": "Possible starter motor or ignition circuit issue.",
-      "advice": "The electrical system appears to have power but the engine does not crank. It is safer to have the car inspected by a mechanic."
+      "diagnosis": "Engine does not crank but dashboard lights are normal, suggesting a starter motor or ignition circuit issue.",
+      "advice": "Avoid repeated start attempts. Have the starting system inspected by a mechanic."
     },
     {
-      "id": "alternator_issue",
+      "id": "charging_issue_battery_light",
       "conditions": {
-        "warning_battery_light": true,
-        "engine_cranks": true
+        "warning_battery_light": true
       },
       "system": "battery_charging",
       "severity": "high",
-      "diagnosis": "Possible alternator or charging system problem.",
-      "advice": "A battery warning light while driving often indicates that the alternator is not charging correctly. Limit driving and have the charging system checked soon."
+      "diagnosis": "Battery/charging warning light indicates a possible alternator or charging system fault.",
+      "advice": "Turn off non-essential electrical loads and drive only to a safe place or a garage. The car may stop once the battery is depleted."
     },
     {
-      "id": "engine_control_fault",
+      "id": "check_engine_general",
       "conditions": {
-        "engine_cranks": true,
         "warning_check_engine": true
       },
-      "system": "engine_ignition",
+      "system": "engine_air_intake",
       "severity": "medium",
-      "diagnosis": "Engine control system has detected a fault.",
-      "advice": "The car may still be drivable, but avoid hard acceleration and have the fault code read at a garage as soon as possible."
+      "diagnosis": "The check engine light indicates an engine management fault that may affect emissions or performance.",
+      "advice": "Drive gently and have fault codes read soon. If the light flashes or the engine misfires badly, stop driving."
+    },
+    {
+      "id": "check_engine_flashing_urgent",
+      "conditions": {
+        "check_engine_flashing": true
+      },
+      "system": "engine_air_intake",
+      "severity": "high",
+      "diagnosis": "A flashing check engine light often indicates severe misfire or a problem that can damage the catalytic converter.",
+      "advice": "Reduce load immediately. If the engine runs very rough, stop driving and seek professional help."
+    },
+    {
+      "id": "stalling_at_idle",
+      "conditions": {
+        "engine_stalls_idle": true
+      },
+      "system": "engine_air_intake",
+      "severity": "medium",
+      "diagnosis": "Stalling at idle can be caused by air intake, idle control, fuel or ignition issues.",
+      "advice": "Avoid situations where stalling is dangerous (e.g., intersections). Have the car inspected and fault codes read."
     },
     {
       "id": "rough_idle_general",
       "conditions": {
-        "engine_runs_rough_idle": true,
-        "warning_check_engine": true
+        "engine_runs_rough_idle": true
       },
-      "system": "engine_fuel",
+      "system": "engine_ignition",
       "severity": "medium",
-      "diagnosis": "Engine runs rough at idle, possibly due to mixture or ignition issues.",
-      "advice": "Avoid high engine loads and have the engine checked for stored fault codes and basic maintenance."
-    },
-    {
-      "id": "cold_start_battery_weak",
-      "conditions": {
-        "hard_start_cold": true,
-        "dashboard_lights_bright": false
-      },
-      "system": "battery_charging",
-      "severity": "medium",
-      "diagnosis": "Battery may be weak, especially at low temperatures.",
-      "advice": "A weak battery can struggle in cold weather. Consider having the battery tested and replaced if necessary."
-    },
-    {
-      "id": "fuel_leak_risk",
-      "conditions": {
-        "smell_fuel_engine_bay": true,
-        "engine_cranks": true
-      },
-      "system": "engine_fuel",
-      "severity": "high",
-      "diagnosis": "Smell of fuel near the engine bay suggests a possible fuel leak.",
-      "advice": "Do not ignore fuel smells in the engine bay. Avoid driving long distances and have the fuel system inspected soon."
+      "diagnosis": "Rough idle often suggests misfire, air intake leaks, fuel mixture issues, or ignition problems.",
+      "advice": "Have ignition and intake checked and fault codes read if the check engine light is on."
     }
   ]
 }

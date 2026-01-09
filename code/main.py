@@ -94,16 +94,23 @@ def compute_matches() -> None:
 
 
 def main() -> None:
-    initialize_state()
-    st.title("Car Diagnosis Helper")
-    st.caption("Interactive expert system to help you reason about possible car issues. Not a replacement for a mechanic.")
+    st.set_page_config(page_title="Car Diagnosis Helper", page_icon="🚗", layout="wide")
 
-    st.markdown("---")
-    st.subheader("1. Select the areas that seem related to the problem")
+    initialize_state()
+
+    st.title("Car Diagnosis Helper")
+    st.caption(
+        "This tool cannot replace a professional mechanic. If there is any safety concern, stop driving and seek help."
+    )
+
+    st.subheader("1. Select the areas that seem related (optional)")
+    st.write(
+        "You can select one or more subsystems to focus the questions. If you are not sure, leave everything unselected."
+    )
 
     cols = st.columns(3)
     for i, system in enumerate(CAR_SYSTEMS):
-        name = system.get("name", system["id"])
+        name = system.get("name", system.get("id", "Unknown"))
         description = system.get("description", "")
         col = cols[i % len(cols)]
         with col:
@@ -135,8 +142,8 @@ def main() -> None:
         st.markdown("---")
         st.subheader("Your answers so far")
         for symptom_id, value in st.session_state.observations.items():
-            symptom = SYMPTOM_INDEX.get(symptom_id)
-            label = symptom["question"] if symptom is not None else symptom_id
+            symptom = SYMPTOM_INDEX.get(symptom_id, {})
+            label = symptom.get("label") or symptom.get("question") or symptom_id
             if value is True:
                 answer_label = "Yes"
             elif value is False:

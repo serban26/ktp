@@ -1,65 +1,64 @@
 {
   "symptoms": [
     {
-      "id": "engine_revs_no_accel",
-      "question": "When you accelerate, do the engine revs rise but the car does not speed up accordingly? (yes/no)"
+      "id": "gear_slipping",
+      "question": "Does the car feel like it slips out of gear or revs rise without speed increasing? (yes/no)"
     },
     {
-      "id": "difficulty_engaging_gears",
-      "question": "Is it difficult to engage gears or do they sometimes refuse to go in? (yes/no)"
+      "id": "clutch_smell",
+      "question": "Do you notice a burning smell like clutch material? (yes/no)"
     },
     {
-      "id": "grinding_when_shifting",
-      "question": "Do you hear grinding noises when changing gears? (yes/no)"
+      "id": "difficulty_shifting",
+      "question": "Is it difficult to shift gears (hard to engage gears)? (yes/no)"
     },
     {
-      "id": "clutch_pedal_high_bite",
-      "question": "Does the clutch engage very high up in the pedal travel? (yes/no)"
+      "id": "transmission_noise",
+      "question": "Do you hear whining or grinding noises from the transmission area? (yes/no)"
     }
   ],
   "rules": [
     {
-      "id": "clutch_slip",
+      "id": "clutch_slipping",
       "conditions": {
-        "engine_revs_no_accel": true,
-        "difficulty_engaging_gears": false
+        "gear_slipping": true,
+        "clutch_smell": true
       },
       "system": "transmission_clutch",
-      "severity": "medium",
-      "diagnosis": "Rising engine speed without matching acceleration suggests clutch slip.",
-      "advice": "Avoid hard acceleration and have the clutch inspected before it fails completely."
+      "severity": "high",
+      "diagnosis": "Gear slipping with a burning smell suggests a slipping clutch.",
+      "advice": "Avoid driving if possible. Continued driving can cause complete clutch failure. Book a repair urgently."
     },
     {
-      "id": "clutch_worn_high_bite",
+      "id": "gear_slipping_general",
       "conditions": {
-        "clutch_pedal_high_bite": true
+        "gear_slipping": true,
+        "clutch_smell": false
       },
       "system": "transmission_clutch",
       "severity": "medium",
-      "diagnosis": "A very high clutch biting point usually indicates a worn clutch.",
-      "advice": "Plan for clutch replacement, especially if there are also signs of slip or noise."
+      "diagnosis": "Gear slipping can indicate clutch wear or transmission problems.",
+      "advice": "Drive gently and have the clutch/transmission inspected soon."
     },
     {
-      "id": "gearbox_synchroniser_wear",
+      "id": "hard_to_shift",
       "conditions": {
-        "grinding_when_shifting": true,
-        "difficulty_engaging_gears": true
+        "difficulty_shifting": true
       },
       "system": "transmission_clutch",
       "severity": "medium",
-      "diagnosis": "Grinding and difficulty engaging gears suggest worn gearbox synchronisers or clutch drag.",
-      "advice": "Have clutch adjustment and gearbox oil checked; further diagnosis may be required."
+      "diagnosis": "Difficulty shifting can indicate clutch adjustment issues, linkage problems, or transmission wear.",
+      "advice": "Avoid forcing gears and book an inspection to prevent further damage."
     },
     {
-      "id": "clutch_drag",
+      "id": "transmission_noise_issue",
       "conditions": {
-        "difficulty_engaging_gears": true,
-        "engine_revs_no_accel": false
+        "transmission_noise": true
       },
       "system": "transmission_clutch",
-      "severity": "medium",
-      "diagnosis": "Difficulty engaging gears without slip can be caused by incomplete clutch disengagement.",
-      "advice": "Clutch hydraulics or cable may need adjustment or repair to prevent gearbox damage."
+      "severity": "high",
+      "diagnosis": "Whining or grinding noises from the transmission can indicate low fluid or internal wear.",
+      "advice": "Limit driving and have transmission fluid level and condition checked. Continued driving may cause major damage."
     }
   ]
 }

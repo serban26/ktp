@@ -18,25 +18,31 @@ Across all subsystems, the system currently contains a little over 100 knowledge
 Requirements:
 
 - Python 3.10+ (we tested with Python 3.13.2)
-- No external dependencies (standard library only)
+- Streamlit (see `requirements.txt`)
 
 Steps:
 
-1. From the project root, run:
+1. Install dependencies from the project root:
 
    ```bash
-   streamlit run main.py
+   pip install -r requirements.txt
    ```
 
-2. Answer the questions with `yes`, `no`, or press `Enter` to skip if you are unsure.
-3. At the end, the system will display one or more possible issues and suggested next steps.
+2. Start the Streamlit app from the project root:
+
+   ```bash
+   streamlit run code/main.py
+   ```
+
+3. Answer the questions using the UI buttons (`Yes`, `No`, or `Skip`).
+4. At the end, the system will display one or more possible issues and suggested next steps.
 
 ## Project structure
 
 All source code lives in the `code/` directory:
 
-- `code/main.py` – entry point that starts an interactive diagnosis session in the console.
-- `code/inference.py` – inference engine that matches user answers to rules and prints diagnoses.
+- `code/main.py` – entry point that starts the Streamlit web app and manages the diagnosis session state.
+- `code/inference.py` – inference logic that filters/ranks rules and selects the next question based on remaining candidate rules.
 - `code/knowledge_base.py` – loader and aggregator that reads the JSON knowledge base and exposes:
   - `CAR_SYSTEMS` – list of car subsystems (battery/charging, brakes, cooling, etc.).
   - `SYMPTOMS` – flat list of all symptom objects from all JSON files.
@@ -53,7 +59,7 @@ All source code lives in the `code/` directory:
   - `steering_suspension.json` – steering and suspension symptoms and rules.
   - `transmission.json` – transmission and clutch symptoms and rules.
   - `wheels.json` – wheel and tyre symptoms and rules.
-- `requirements.txt` – Python dependencies file (currently empty; included to satisfy project requirements).
+- `requirements.txt` – Python dependencies file (includes Streamlit to ensure reproducibility).
 
 The JSON files contain only declarative knowledge (symptoms, rules, subsystem identifiers). All procedural code for asking questions and performing inference lives in `main.py`, `inference.py`, and `knowledge_base.py`.
 
@@ -96,7 +102,8 @@ Rules are stored in JSON as objects with:
 - `conditions` – mapping from symptom ids to expected boolean values (`true` / `false`),
 - `system` – affected car subsystem identifier (from `systems` in `general.json`),
 - `diagnosis` – short sentence summarising the likely cause,
-- `advice` – short, actionable follow-up recommendation.
+- `advice` – short, actionable follow-up recommendation,
+- `severity` – a coarse urgency label (`low`, `medium`, `high`) used for result presentation.
 
 Example:
 
@@ -108,6 +115,7 @@ Example:
     "dashboard_lights_bright": false
   },
   "system": "battery_charging",
+  "severity": "high",
   "diagnosis": "Likely battery or battery connection problem.",
   "advice": "Do not keep trying to start the car. Check battery terminals and call roadside assistance or a garage."
 }
@@ -130,27 +138,32 @@ This loader does not contain any hard-coded rules itself; all knowledge is read 
 
 ### Asking questions and collecting observations
 
-`code/inference.py` iterates over all entries in `SYMPTOMS` and asks the user each question in order. Answers are stored in a dictionary:
+The Streamlit UI in `code/main.py` manages a single diagnosis session. It asks questions one by one and stores answers in a dictionary:
 
 - `True` for “yes”,
 - `False` for “no”,
-- `None` for skipped/unknown (when the user presses Enter).
+- `None` for skipped/unknown.
 
-### Rule matching
+Unlike a console loop, the Streamlit app stores the session state across UI interactions so the user can answer comfortably without typing.
 
-For each rule in `RULES`, the inference engine checks whether the rule’s conditions are compatible with the observed answers:
+### Candidate filtering and next-question selection
 
-- If a condition refers to a symptom the user **skipped** (`None`), that condition is ignored for that rule.
-- If a condition refers to a symptom that the user answered, and the answer contradicts the expected value, the rule does **not** match.
-- If at least one condition is supported by an explicit answer and none of the answered conditions contradict the rule, the rule is considered a match and its diagnosis is shown.
+The inference logic maintains a set of rules that are still compatible with the answers given so far:
 
-In other words, skipped questions do not directly influence the result: only questions that the user actually answered are used to accept or reject rules.
+- If an answered symptom contradicts the expected value of a rule condition, that rule is removed from the candidate set.
+- Skipped symptoms do not remove rules.
 
-### Result presentation
+To avoid asking every possible question, the next question is selected from symptoms that appear in the remaining candidate rules and have not been asked yet. A simple heuristic is used: choose a symptom that appears most frequently in remaining candidates, because it tends to eliminate many rules quickly.
 
-All rules that match the user’s answers are collected and shown back to the user in a simple list. For each match, the system prints:
+This keeps the dialogue relatively short while still allowing deeper paths where multiple diagnoses must be ruled out.
+
+### Rule matching and results
+
+After questioning ends (or when there are no remaining informative questions), the system ranks candidate rules and displays the best matching ones. For each match, it shows:
 
 - the `diagnosis` (likely cause),
+- the `system` (subsystem name),
+- the `severity` label,
 - the `advice` (concrete next step or safety recommendation).
 
 ## Limitations and future work
@@ -158,12 +171,13 @@ All rules that match the user’s answers are collected and shown back to the us
 Current limitations:
 
 - The rule base covers only a subset of all possible car faults and focuses on common, generic scenarios.
-- The question order is fixed and not yet adaptive to previous answers.
-- There is no explicit explanation component that shows which exact rules fired and why.
-- Skipping many questions may prevent some rules from matching, because at least one condition must be supported by an explicit answer.
+- Some faults are ambiguous without tools (OBD fault codes, pressure tests, etc.), so the system reports plausible candidates rather than a single definitive answer.
+- The question selection heuristic is simple; it is effective in practice but not guaranteed optimal.
+- Skipping many questions reduces discrimination power, because fewer rule conditions can be supported.
 
 Planned improvements:
 
 - Extend the knowledge base with more detailed patterns from additional expert interviews.
-- Introduce adaptive questioning that only asks questions relevant to still-possible diagnoses.
-- Explore a graphical or web-based front-end that uses the same JSON knowledge base and inference engine.
+- Improve adaptive questioning using a more explicit information-gain style criterion.
+- Add an explanation component that shows which exact answers supported each diagnosis.
+- Add more scenario-based validation with the expert mechanic and a regression test set.

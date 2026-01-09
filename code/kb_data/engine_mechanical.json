@@ -1,63 +1,62 @@
 {
   "symptoms": [
     {
-      "id": "knocking_noise_under_load",
-      "question": "Do you hear a knocking or banging noise from the engine when accelerating or driving uphill? (yes/no)"
+      "id": "engine_knocking_noise",
+      "question": "Do you hear knocking noises from the engine when driving or accelerating? (yes/no)"
     },
     {
-      "id": "low_oil_pressure_light",
-      "question": "Does the oil pressure or oil warning light come on while driving? (yes/no)"
+      "id": "oil_warning_light",
+      "question": "Is the oil pressure warning light on? (yes/no)"
     },
     {
       "id": "blue_smoke_exhaust",
-      "question": "Do you notice blue or bluish smoke from the exhaust, especially when accelerating? (yes/no)"
+      "question": "Do you see blue smoke from the exhaust? (yes/no)"
     },
     {
-      "id": "tapping_noise_cold_start",
-      "question": "Do you hear a light tapping or ticking noise from the engine when it is cold that reduces when warm? (yes/no)"
+      "id": "engine_overheats",
+      "question": "Does the engine overheat or does the temperature gauge go close to the red zone? (yes/no)"
     }
   ],
   "rules": [
     {
-      "id": "low_oil_pressure_critical",
+      "id": "oil_pressure_warning",
       "conditions": {
-        "low_oil_pressure_light": true
-      },
-      "system": "engine_mechanical",
-      "severity": "critical",
-      "diagnosis": "Low oil pressure warning indicates a serious lubrication problem.",
-      "advice": "Stop the engine as soon as it is safe to do so and check the oil level. Do not continue driving with low oil pressure."
-    },
-    {
-      "id": "rod_knock_engine",
-      "conditions": {
-        "knocking_noise_under_load": true,
-        "low_oil_pressure_light": false
+        "oil_warning_light": true
       },
       "system": "engine_mechanical",
       "severity": "high",
-      "diagnosis": "Knocking under load without low oil pressure can indicate worn engine bearings or detonation.",
-      "advice": "Avoid high loads and have the engine inspected. Long-term driving can cause major engine damage."
+      "diagnosis": "Oil pressure warning light suggests low oil pressure or oil supply problem.",
+      "advice": "Stop driving as soon as safely possible and check oil level. Continuing to drive may cause severe engine damage."
     },
     {
-      "id": "valve_tappet_noise",
+      "id": "engine_knock",
       "conditions": {
-        "tapping_noise_cold_start": true
+        "engine_knocking_noise": true
       },
       "system": "engine_mechanical",
-      "severity": "low",
-      "diagnosis": "Tapping noise on cold start that improves when warm can be caused by valve lifters or clearances.",
-      "advice": "Mention this symptom during the next service so that valve clearances and oil quality can be checked."
+      "severity": "high",
+      "diagnosis": "Knocking noises can indicate serious engine mechanical issues (e.g., bearing wear or detonation).",
+      "advice": "Avoid driving and have the engine inspected by a mechanic soon to prevent further damage."
     },
     {
-      "id": "oil_burning",
+      "id": "blue_smoke_oil_burning",
       "conditions": {
         "blue_smoke_exhaust": true
       },
       "system": "engine_mechanical",
       "severity": "medium",
-      "diagnosis": "Blue exhaust smoke usually indicates that the engine is burning oil.",
-      "advice": "Monitor oil level frequently and have compression or leak-down tests performed to locate worn components."
+      "diagnosis": "Blue smoke often indicates oil burning (e.g., worn seals or piston rings).",
+      "advice": "Check oil level regularly and book a garage inspection. Prolonged driving may worsen the issue."
+    },
+    {
+      "id": "overheating_general",
+      "conditions": {
+        "engine_overheats": true
+      },
+      "system": "cooling_system",
+      "severity": "high",
+      "diagnosis": "Overheating can be caused by cooling system failure or coolant loss.",
+      "advice": "Stop driving, let the engine cool down, and check coolant level if safe. Seek assistance to avoid engine damage."
     }
   ]
 }

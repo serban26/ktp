@@ -1,77 +1,78 @@
 {
   "symptoms": [
     {
-      "id": "strange_brake_noise",
-      "question": "Do you hear a high-pitched squealing or grinding noise when braking? (yes/no)"
+      "id": "brake_warning_light",
+      "question": "Is the brake warning light on (or does it say brake)? (yes/no)"
+    },
+    {
+      "id": "brake_pedal_soft",
+      "question": "Does the brake pedal feel unusually soft or go closer to the floor? (yes/no)"
+    },
+    {
+      "id": "brake_squeal",
+      "question": "Do you hear squealing noises when braking? (yes/no)"
+    },
+    {
+      "id": "brake_grinding",
+      "question": "Do you hear grinding noises when braking? (yes/no)"
     },
     {
       "id": "car_pulls_braking",
-      "question": "Does the car pull strongly to one side when braking? (yes/no)"
-    },
-    {
-      "id": "brake_warning_light",
-      "question": "Is a brake warning light on in the dashboard? (yes/no)"
-    },
-    {
-      "id": "brake_pedal_spongy",
-      "question": "Does the brake pedal feel soft or spongy and travel further than usual? (yes/no)"
-    },
-    {
-      "id": "brake_pedal_hard",
-      "question": "Does the brake pedal feel unusually hard and require a lot of force? (yes/no)"
+      "question": "Does the car pull to one side when braking? (yes/no)"
     }
   ],
   "rules": [
     {
-      "id": "brake_pads_worn",
+      "id": "brake_hydraulic_warning_soft_pedal",
       "conditions": {
-        "strange_brake_noise": true
+        "brake_warning_light": true,
+        "brake_pedal_soft": true
+      },
+      "system": "brake_hydraulic",
+      "severity": "high",
+      "diagnosis": "Brake warning light with a soft pedal suggests a hydraulic brake issue (fluid leak or air in system).",
+      "advice": "Do not continue driving. Braking performance may be severely reduced. Call for assistance or have the car towed."
+    },
+    {
+      "id": "brake_squeal_pads",
+      "conditions": {
+        "brake_squeal": true
+      },
+      "system": "brake_mechanical",
+      "severity": "medium",
+      "diagnosis": "Squealing when braking often indicates worn brake pads.",
+      "advice": "Drive gently and book a brake inspection soon to avoid damage to discs."
+    },
+    {
+      "id": "brake_grinding_urgent",
+      "conditions": {
+        "brake_grinding": true
       },
       "system": "brake_mechanical",
       "severity": "high",
-      "diagnosis": "Brake pads or discs may be worn.",
-      "advice": "Continuous squealing or grinding when braking suggests worn pads or discs. Reduce driving and book a brake inspection soon."
+      "diagnosis": "Grinding noise when braking can indicate pads are worn through and metal is contacting the disc.",
+      "advice": "Stop driving if possible and have the brakes repaired immediately to prevent loss of braking and expensive damage."
     },
     {
-      "id": "brake_imbalance",
+      "id": "pulling_when_braking",
       "conditions": {
         "car_pulls_braking": true
       },
       "system": "brake_hydraulic",
-      "severity": "high",
-      "diagnosis": "Possible brake imbalance or sticking brake on one side.",
-      "advice": "Pulling to one side while braking can be dangerous. Avoid high-speed driving and visit a garage as soon as possible."
+      "severity": "medium",
+      "diagnosis": "Pulling to one side under braking can indicate uneven braking force (caliper issue, fluid issue, or worn components).",
+      "advice": "Reduce speed and book an inspection soon. If pulling becomes severe, stop driving."
     },
     {
-      "id": "brake_fluid_or_leak",
+      "id": "brake_warning_only",
       "conditions": {
-        "brake_warning_light": true
-      },
-      "system": "brake_hydraulic",
-      "severity": "critical",
-      "diagnosis": "Possible low brake fluid level or brake system leak.",
-      "advice": "A brake warning light can indicate a serious fault. Do not continue driving until the brake system has been inspected."
-    },
-    {
-      "id": "air_in_brake_lines",
-      "conditions": {
-        "brake_pedal_spongy": true
+        "brake_warning_light": true,
+        "brake_pedal_soft": false
       },
       "system": "brake_hydraulic",
       "severity": "high",
-      "diagnosis": "Spongy brake pedal may indicate air in the brake lines or fluid issues.",
-      "advice": "Reduced brake firmness can greatly increase stopping distance. Have the brake system bled and checked as soon as possible."
-    },
-    {
-      "id": "brake_booster_issue",
-      "conditions": {
-        "brake_pedal_hard": true,
-        "engine_runs_rough_idle": true
-      },
-      "system": "brake_hydraulic",
-      "severity": "high",
-      "diagnosis": "Hard brake pedal together with rough idle can indicate a brake booster or vacuum leak problem.",
-      "advice": "A failing brake booster affects braking effort and engine running. Avoid driving in heavy traffic and have the system inspected."
+      "diagnosis": "Brake warning light can indicate low brake fluid, parking brake issue, or other brake system problem.",
+      "advice": "Check brake fluid level if safe. If the warning persists, avoid driving and have the brakes checked urgently."
     }
   ]
 }

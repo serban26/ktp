@@ -1,64 +1,63 @@
 {
   "symptoms": [
     {
-      "id": "headlights_dim_idle",
-      "question": "Do the headlights become noticeably dimmer when the engine is idling? (yes/no)"
+      "id": "headlights_dim",
+      "question": "Are the headlights noticeably dimmer than usual? (yes/no)"
     },
     {
-      "id": "indicators_flash_fast",
-      "question": "Do the turn indicators flash faster than normal on one side? (yes/no)"
+      "id": "lights_flicker",
+      "question": "Do the lights flicker while driving? (yes/no)"
     },
     {
-      "id": "interior_lights_flicker",
-      "question": "Do interior lights flicker or vary in brightness while driving? (yes/no)"
+      "id": "indicator_not_working",
+      "question": "Is a turn indicator not working properly? (yes/no)"
     },
     {
-      "id": "single_light_not_working",
-      "question": "Is there a single headlight or tail light that does not work while others do? (yes/no)"
+      "id": "multiple_electrical_issues",
+      "question": "Do you have multiple electrical issues at the same time (e.g., radio, windows, lights)? (yes/no)"
     }
   ],
   "rules": [
     {
-      "id": "alternator_weak_lighting",
+      "id": "dim_headlights_battery_or_alternator",
       "conditions": {
-        "headlights_dim_idle": true,
-        "engine_cranks": true
+        "headlights_dim": true,
+        "warning_battery_light": true
+      },
+      "system": "body_lighting_electrical",
+      "severity": "high",
+      "diagnosis": "Dim headlights with a battery warning light suggests charging system problems.",
+      "advice": "Turn off non-essential electrical loads and drive only to a safe place or a garage. The car may stop once the battery is depleted."
+    },
+    {
+      "id": "flicker_alternator_issue",
+      "conditions": {
+        "lights_flicker": true
       },
       "system": "body_lighting_electrical",
       "severity": "medium",
-      "diagnosis": "Headlights that dim at idle can indicate a weak alternator or poor charging at low speed.",
-      "advice": "Have the charging system output checked, especially if combined with battery warnings."
+      "diagnosis": "Flickering lights can indicate alternator, voltage regulator, or poor electrical connection.",
+      "advice": "Have charging voltage and battery connections checked soon."
     },
     {
-      "id": "indicator_bulb_out",
+      "id": "indicator_bulb_or_relay",
       "conditions": {
-        "indicators_flash_fast": true
+        "indicator_not_working": true
       },
       "system": "body_lighting_electrical",
       "severity": "low",
-      "diagnosis": "Fast flashing on one side usually indicates a failed indicator bulb.",
-      "advice": "Check the bulbs on the affected side and replace any that are not working."
+      "diagnosis": "A turn indicator not working is often caused by a bulb, fuse, or relay issue.",
+      "advice": "Check bulbs and fuses. Repair soon for road safety."
     },
     {
-      "id": "poor_battery_connection_lights",
+      "id": "multiple_electrical_faults",
       "conditions": {
-        "interior_lights_flicker": true,
-        "dashboard_lights_bright": false
+        "multiple_electrical_issues": true
       },
       "system": "body_lighting_electrical",
       "severity": "medium",
-      "diagnosis": "Flickering lights with weak dash illumination can be caused by poor battery or earth connections.",
-      "advice": "Have the main battery and earth connections cleaned and tightened."
-    },
-    {
-      "id": "single_bulb_failure",
-      "conditions": {
-        "single_light_not_working": true
-      },
-      "system": "body_lighting_electrical",
-      "severity": "low",
-      "diagnosis": "A single light out while others work normally is usually just a failed bulb.",
-      "advice": "Replace the failed bulb and check that the light operates again."
+      "diagnosis": "Multiple electrical issues can indicate battery weakness, alternator issues, or a main grounding problem.",
+      "advice": "Have battery condition, alternator output and grounding connections checked."
     }
   ]
 }

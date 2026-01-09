@@ -2,65 +2,61 @@
   "symptoms": [
     {
       "id": "ac_not_cold",
-      "question": "When the air conditioning is on, does the air remain only slightly cool or not cold at all? (yes/no)"
+      "question": "Does the air conditioning fail to blow cold air? (yes/no)"
     },
     {
-      "id": "ac_smell_musty",
-      "question": "Does the air from the vents have a musty or mouldy smell when the AC is used? (yes/no)"
+      "id": "musty_smell_ac",
+      "question": "Do you notice a musty smell when using the AC? (yes/no)"
     },
     {
-      "id": "windows_fog_easily",
-      "question": "Do the windows fog up easily on the inside, even with ventilation on? (yes/no)"
+      "id": "fan_weak",
+      "question": "Is the cabin fan airflow weak even at high fan settings? (yes/no)"
     },
     {
-      "id": "ac_noise_on",
-      "question": "Do you hear unusual noises when the AC or fan is switched on? (yes/no)"
+      "id": "windows_fogging",
+      "question": "Do the windows fog up more than usual? (yes/no)"
     }
   ],
   "rules": [
     {
-      "id": "low_refrigerant",
+      "id": "ac_low_refrigerant",
       "conditions": {
-        "ac_not_cold": true,
-        "ac_noise_on": true
-      },
-      "system": "climate_ac",
-      "severity": "medium",
-      "diagnosis": "Poor cooling with noises when AC is on can indicate low refrigerant or compressor issues.",
-      "advice": "Have the AC system checked for leaks and correct refrigerant level."
-    },
-    {
-      "id": "cabin_filter_dirty",
-      "conditions": {
-        "ac_smell_musty": true,
-        "windows_fog_easily": true
+        "ac_not_cold": true
       },
       "system": "climate_ac",
       "severity": "low",
-      "diagnosis": "Musty smell and easy fogging often point to a dirty cabin filter or moisture in the ventilation system.",
-      "advice": "Replacing the cabin filter and cleaning the vents can improve smell and visibility."
+      "diagnosis": "AC not cooling can be caused by low refrigerant or AC system fault.",
+      "advice": "Book an AC service to check refrigerant level and leaks."
     },
     {
-      "id": "ac_not_used_regularly",
+      "id": "ac_musty_filter",
       "conditions": {
-        "ac_smell_musty": true,
-        "ac_not_cold": false
+        "musty_smell_ac": true
       },
       "system": "climate_ac",
       "severity": "low",
-      "diagnosis": "Musty smell with normal cooling can be caused by condensation and bacterial growth on the evaporator.",
-      "advice": "Running the AC regularly and using an AC cleaner product can help reduce odours."
+      "diagnosis": "Musty smell from AC can indicate mould in the system or a dirty cabin filter.",
+      "advice": "Replace the cabin filter and consider an AC cleaning treatment."
     },
     {
-      "id": "blower_or_fan_issue",
+      "id": "fan_weak_filter_or_blower",
       "conditions": {
-        "ac_noise_on": true,
-        "ac_not_cold": false
+        "fan_weak": true
       },
       "system": "climate_ac",
       "severity": "low",
-      "diagnosis": "Noises when the fan runs but cooling is normal can indicate leaves or wear in the blower fan.",
-      "advice": "Have the blower motor and fan housing inspected, especially if noises get worse over time."
+      "diagnosis": "Weak airflow can be caused by a blocked cabin filter or blower fan issue.",
+      "advice": "Check or replace the cabin filter. If airflow remains weak, have the blower checked."
+    },
+    {
+      "id": "fogging_possible_heater_issue",
+      "conditions": {
+        "windows_fogging": true
+      },
+      "system": "climate_ac",
+      "severity": "low",
+      "diagnosis": "Excessive window fogging can be related to humidity, cabin filter issues, or heater/AC performance.",
+      "advice": "Use AC/defrost mode. If fogging is persistent, have cabin filter and climate system checked."
     }
   ]
 }

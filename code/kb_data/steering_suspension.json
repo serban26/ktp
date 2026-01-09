@@ -2,62 +2,61 @@
   "symptoms": [
     {
       "id": "clunk_over_bumps",
-      "question": "Do you hear clunking or knocking noises from the suspension when driving over bumps? (yes/no)"
+      "question": "Do you hear clunking noises when driving over bumps? (yes/no)"
     },
     {
       "id": "steering_loose",
-      "question": "Does the steering wheel feel loose with free play before the wheels respond? (yes/no)"
+      "question": "Does the steering feel loose or vague? (yes/no)"
     },
     {
       "id": "steering_heavy",
-      "question": "Does the steering feel heavier than usual, especially at low speeds? (yes/no)"
+      "question": "Does the steering feel unusually heavy? (yes/no)"
     },
     {
       "id": "car_pulls_straight_line",
-      "question": "When driving in a straight line on a level road, does the car pull to one side? (yes/no)"
+      "question": "Does the car pull to one side when driving straight? (yes/no)"
     }
   ],
   "rules": [
     {
-      "id": "worn_suspension_bushes",
+      "id": "loose_suspension_clunk",
       "conditions": {
         "clunk_over_bumps": true
       },
       "system": "steering_suspension",
       "severity": "medium",
-      "diagnosis": "Noises over bumps suggest worn suspension bushes or joints.",
-      "advice": "Worn suspension parts can affect handling and tyre wear. Have the suspension inspected."
+      "diagnosis": "Clunking over bumps can indicate worn suspension bushings, ball joints, or anti-roll bar links.",
+      "advice": "Drive carefully and book a suspension inspection soon to prevent worsening wear."
     },
     {
-      "id": "steering_play_issue",
+      "id": "loose_steering_warning",
       "conditions": {
         "steering_loose": true
       },
       "system": "steering_suspension",
       "severity": "high",
-      "diagnosis": "Loose steering with free play can indicate worn steering links or rack.",
-      "advice": "Loose steering reduces control of the vehicle. Have the steering system checked soon."
+      "diagnosis": "Loose steering can be caused by worn steering components and can be a safety concern.",
+      "advice": "Reduce speed and have the steering checked as soon as possible."
     },
     {
-      "id": "power_steering_problem",
+      "id": "heavy_steering_issue",
       "conditions": {
-        "steering_heavy": true,
-        "vibration_high_speed": false
+        "steering_heavy": true
       },
       "system": "steering_suspension",
       "severity": "medium",
-      "diagnosis": "Heavy steering without vibration can indicate a power steering pump, belt, or fluid problem.",
-      "advice": "Check the power steering fluid level and have the system inspected if the problem persists."
+      "diagnosis": "Heavy steering can indicate power steering issues, low fluid, or mechanical steering resistance.",
+      "advice": "Check power steering fluid if applicable and have the system inspected soon."
     },
     {
-      "id": "alignment_pull",
+      "id": "pulling_alignment_or_brake",
       "conditions": {
         "car_pulls_straight_line": true
       },
       "system": "steering_suspension",
       "severity": "medium",
-      "diagnosis": "Pulling in a straight line is often caused by wheel alignment or tyre pressure differences.",
-      "advice": "Check tyre pressures and ask for an alignment check at the next opportunity."
+      "diagnosis": "Pulling to one side can be caused by alignment issues, tyre issues, or brake drag.",
+      "advice": "Check tyre pressures and book an alignment check. If pulling occurs mostly under braking, have brakes inspected."
     }
   ]
 }
