@@ -132,9 +132,9 @@ def main() -> None:
                 st.markdown("**Current question**")
                 st.write(symptom["question"])
                 col_yes, col_no, col_skip = st.columns(3)
-                col_yes.button("Yes", key="answer_yes", on_click=record_answer_yes)
-                col_no.button("No", key="answer_no", on_click=record_answer_no)
-                col_skip.button("Skip", key="answer_skip", on_click=record_answer_skip)
+                col_yes.button("Yes", key=f"answer_yes_{symptom_id}", on_click=record_answer_yes)
+                col_no.button("No", key=f"answer_no_{symptom_id}", on_click=record_answer_no)
+                col_skip.button("Skip", key=f"answer_skip_{symptom_id}", on_click=record_answer_skip)
     elif not st.session_state.finished:
         st.info("Select one or more areas above and click **Start new diagnosis** to begin.")
 
@@ -164,7 +164,7 @@ def main() -> None:
                 if system_id in SYSTEM_INDEX:
                     system_name = SYSTEM_INDEX[system_id].get("name", system_id)
                 severity = rule.get("severity", "medium")
-                score = rule_score(rule, st.session_state.observations)
+                score = float(rule.get("score", rule_score(rule, st.session_state.observations)))
                 percent = int(round(score * 100))
                 with st.container(border=True):
                     st.markdown(f"**{system_name}**  ·  Severity: `{severity}`")

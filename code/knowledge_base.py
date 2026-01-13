@@ -32,7 +32,9 @@ _MODULE_NAMES = [
 
 CAR_SYSTEMS: List[Dict[str, Any]] = []
 SYMPTOMS: List[Dict[str, Any]] = []
+ORIGINAL_RULES: List[Dict[str, Any]] = []
 RULES: List[Dict[str, Any]] = []
+DIAGNOSIS_RULES: List[Dict[str, Any]] = []
 
 
 _seen_system_ids = set()
@@ -58,5 +60,29 @@ for module_name in _MODULE_NAMES:
     for rule in data.get("rules", []):
         rule_id = rule["id"]
         if rule_id not in _seen_rule_ids:
-            RULES.append(rule)
+            ORIGINAL_RULES.append(rule)
             _seen_rule_ids.add(rule_id)
+
+
+for rule in ORIGINAL_RULES:
+    has_conclusion = "diagnosis" in rule or "advice" in rule or "severity" in rule
+    has_actions = "produces" in rule or "sets" in rule
+    if has_conclusion and not has_actions:
+        evidence_fact = f"evidence::{rule['id']}"
+        evidence_rule = dict(rule)
+        evidence_rule["produces"] = {evidence_fact: True}
+        evidence_rule["evidence_fact"] = evidence_fact
+        RULES.append(evidence_rule)
+
+        diagnosis_rule: Dict[str, Any] = {
+            "id": f"diagnosis__{rule['id']}",
+            "conditions": {evidence_fact: True},
+            "system": rule.get("system"),
+            "severity": rule.get("severity"),
+            "diagnosis": rule.get("diagnosis"),
+            "advice": rule.get("advice"),
+            "source_rule": rule.get("id"),
+        }
+        DIAGNOSIS_RULES.append(diagnosis_rule)
+    else:
+        RULES.append(rule)
