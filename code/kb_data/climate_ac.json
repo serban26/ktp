@@ -1,0 +1,62 @@
+{
+  "symptoms": [
+    {
+      "id": "ac_not_cold",
+      "question": "Does the air conditioning fail to blow cold air? (yes/no)"
+    },
+    {
+      "id": "musty_smell_ac",
+      "question": "Do you notice a musty smell when using the AC? (yes/no)"
+    },
+    {
+      "id": "fan_weak",
+      "question": "Is the cabin fan airflow weak even at high fan settings? (yes/no)"
+    },
+    {
+      "id": "windows_fogging",
+      "question": "Do the windows fog up more than usual? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "ac_low_refrigerant",
+      "conditions": {
+        "ac_not_cold": true
+      },
+      "system": "climate_ac",
+      "severity": "low",
+      "diagnosis": "AC not cooling can be caused by low refrigerant or AC system fault.",
+      "advice": "Book an AC service to check refrigerant level and leaks."
+    },
+    {
+      "id": "ac_musty_filter",
+      "conditions": {
+        "musty_smell_ac": true
+      },
+      "system": "climate_ac",
+      "severity": "low",
+      "diagnosis": "Musty smell from AC can indicate mould in the system or a dirty cabin filter.",
+      "advice": "Replace the cabin filter and consider an AC cleaning treatment."
+    },
+    {
+      "id": "fan_weak_filter_or_blower",
+      "conditions": {
+        "fan_weak": true
+      },
+      "system": "climate_ac",
+      "severity": "low",
+      "diagnosis": "Weak airflow can be caused by a blocked cabin filter or blower fan issue.",
+      "advice": "Check or replace the cabin filter. If airflow remains weak, have the blower checked."
+    },
+    {
+      "id": "fogging_possible_heater_issue",
+      "conditions": {
+        "windows_fogging": true
+      },
+      "system": "climate_ac",
+      "severity": "low",
+      "diagnosis": "Excessive window fogging can be related to humidity, cabin filter issues, or heater/AC performance.",
+      "advice": "Use AC/defrost mode. If fogging is persistent, have cabin filter and climate system checked."
+    }
+  ]
+}

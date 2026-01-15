@@ -1,0 +1,122 @@
+{
+  "symptoms": [
+    {
+      "id": "fuel_level_low",
+      "question": "Is your fuel level low (near empty)? (yes/no)"
+    },
+    {
+      "id": "poor_acceleration",
+      "question": "Has the car become noticeably slower to accelerate than usual? (yes/no)"
+    },
+    {
+      "id": "hesitation_under_load",
+      "question": "Does the engine hesitate or stutter when you accelerate or go uphill? (yes/no)"
+    },
+    {
+      "id": "misfire_under_accel",
+      "question": "Do you feel jerking or misfires mainly when accelerating? (yes/no)"
+    },
+    {
+      "id": "black_smoke_exhaust",
+      "question": "Do you see black smoke from the exhaust when accelerating? (yes/no)"
+    },
+    {
+      "id": "fuel_consumption_high",
+      "question": "Has your fuel consumption increased noticeably recently? (yes/no)"
+    },
+    {
+      "id": "hard_start_hot",
+      "question": "Is the car hard to start when the engine is already warm? (yes/no)"
+    },
+    {
+      "id": "fuel_filter_old",
+      "question": "Do you know if the fuel filter has not been replaced for a long time? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "fuel_starvation_low_fuel",
+      "conditions": {
+        "fuel_level_low": true,
+        "hesitation_under_load": true
+      },
+      "system": "engine_fuel",
+      "severity": "medium",
+      "diagnosis": "Low fuel level with hesitation under load can indicate fuel starvation, especially in corners or on hills.",
+      "advice": "Avoid running the tank very low and refuel. If the problem remains, have the fuel pick-up and pump checked."
+    },
+    {
+      "id": "clogged_fuel_filter",
+      "conditions": {
+        "hesitation_under_load": true,
+        "poor_acceleration": true,
+        "fuel_filter_old": true
+      },
+      "system": "engine_fuel",
+      "severity": "medium",
+      "diagnosis": "Hesitation and poor acceleration with an old fuel filter suggest restricted fuel flow.",
+      "advice": "Replacing the fuel filter is a good first step. If symptoms remain, the fuel pump and pressure should be tested."
+    },
+    {
+      "id": "rich_mixture_black_smoke",
+      "conditions": {
+        "black_smoke_exhaust": true,
+        "fuel_consumption_high": true
+      },
+      "system": "engine_fuel",
+      "severity": "high",
+      "diagnosis": "Black smoke and increased fuel consumption indicate an overly rich mixture or fuel injection issue.",
+      "advice": "Avoid long drives and have the engine checked soon. Rich running can damage the catalytic converter."
+    },
+    {
+      "id": "hot_start_vapour_lock",
+      "conditions": {
+        "hard_start_hot": true,
+        "fuel_level_low": false
+      },
+      "system": "engine_fuel",
+      "severity": "low",
+      "diagnosis": "Difficult hot starts with normal fuel level can be caused by fuel vapour or weak fuel pressure.",
+      "advice": "Mention the hot-start behaviour to a mechanic; checking fuel pressure and injector leakage may be necessary."
+    },
+    {
+      "id": "injector_misfire",
+      "conditions": {
+        "misfire_under_accel": true,
+        "warning_check_engine": true
+      },
+      "system": "engine_fuel",
+      "severity": "medium",
+      "diagnosis": "Misfire during acceleration with a check engine light suggests injector or mixture problems on one or more cylinders.",
+      "advice": "Avoid heavy acceleration and have the fault codes read to identify which cylinder is affected."
+    },
+    {
+      "id": "rich_mixture_fuel_system_deep",
+      "conditions": {
+        "warning_check_engine": true,
+        "black_smoke_exhaust": true,
+        "fuel_consumption_high": true,
+        "smell_fuel_engine_bay": true,
+        "poor_acceleration": true
+      },
+      "system": "engine_fuel",
+      "severity": "high",
+      "diagnosis": "Black smoke, high fuel consumption and fuel smell with a check engine light strongly suggest a rich-running condition (leaking injectors, incorrect fuel pressure, or faulty airflow/oxygen sensing).",
+      "advice": "Avoid long drives and have fault codes read. Ask the mechanic to check injector leakage, fuel pressure regulation and airflow/oxygen sensor readings. Rich running can damage the catalytic converter."
+    },
+    {
+      "id": "fuel_delivery_restriction_deep",
+      "conditions": {
+        "hesitation_under_load": true,
+        "poor_acceleration": true,
+        "fuel_filter_old": true,
+        "black_smoke_exhaust": false,
+        "smell_fuel_engine_bay": false
+      },
+      "system": "engine_fuel",
+      "severity": "medium",
+      "diagnosis": "Hesitation under load and poor acceleration with an old fuel filter, without black smoke or fuel smell, points to restricted fuel delivery rather than rich-mixture faults.",
+      "advice": "Replace the fuel filter and have fuel pressure checked. If symptoms remain, test the fuel pump and pressure regulator."
+    }
+  ]
+}

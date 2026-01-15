@@ -1,0 +1,68 @@
+{
+  "symptoms": [
+    {
+      "id": "temperature_high",
+      "question": "Is the temperature gauge unusually high or close to the red zone? (yes/no)"
+    },
+    {
+      "id": "coolant_low",
+      "question": "Is the coolant level low or do you see coolant loss? (yes/no)"
+    },
+    {
+      "id": "sweet_smell",
+      "question": "Do you notice a sweet smell (like coolant) from the engine area? (yes/no)"
+    },
+    {
+      "id": "steam_from_hood",
+      "question": "Do you see steam coming from under the hood? (yes/no)"
+    },
+    {
+      "id": "heater_not_hot",
+      "question": "Does the cabin heater blow cold air even when the engine is warm? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "coolant_leak_overheating",
+      "conditions": {
+        "temperature_high": true,
+        "sweet_smell": true
+      },
+      "system": "cooling_system",
+      "severity": "high",
+      "diagnosis": "High temperature with a sweet smell suggests coolant leak and overheating.",
+      "advice": "Stop driving, let the engine cool down, and seek assistance. Driving while overheating can severely damage the engine."
+    },
+    {
+      "id": "coolant_low_issue",
+      "conditions": {
+        "coolant_low": true
+      },
+      "system": "cooling_system",
+      "severity": "medium",
+      "diagnosis": "Low coolant level can indicate a leak or coolant consumption.",
+      "advice": "Top up coolant if safe and monitor temperature. Have the cooling system checked for leaks soon."
+    },
+    {
+      "id": "steam_overheat_urgent",
+      "conditions": {
+        "steam_from_hood": true
+      },
+      "system": "cooling_system",
+      "severity": "high",
+      "diagnosis": "Steam from under the hood can indicate severe overheating or coolant boiling.",
+      "advice": "Stop driving immediately when safe. Do not open the radiator cap while hot. Call for assistance."
+    },
+    {
+      "id": "heater_cold_possible_airlock",
+      "conditions": {
+        "heater_not_hot": true,
+        "coolant_low": true
+      },
+      "system": "cooling_system",
+      "severity": "medium",
+      "diagnosis": "Cold heater with low coolant can indicate air in the system or low coolant circulation.",
+      "advice": "Avoid long drives and have coolant level and circulation checked. Airlocks can lead to overheating."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "symptoms": [
+    {
+      "id": "misfire_at_idle",
+      "question": "Does the engine misfire or run rough mainly at idle? (yes/no)"
+    },
+    {
+      "id": "misfire_wet_weather",
+      "question": "Are misfires worse in wet or humid weather? (yes/no)"
+    },
+    {
+      "id": "backfire_intake",
+      "question": "Do you hear popping/backfiring through the intake when starting or accelerating? (yes/no)"
+    },
+    {
+      "id": "engine_cranks_no_start",
+      "question": "Does the engine crank normally but fail to start? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "ignition_misfire_idle",
+      "conditions": {
+        "misfire_at_idle": true,
+        "warning_check_engine": true
+      },
+      "system": "engine_ignition",
+      "severity": "medium",
+      "diagnosis": "Misfire at idle with a check engine light often points to ignition coil or spark plug issues.",
+      "advice": "Continued misfiring can damage the catalytic converter. Have ignition components and fault codes checked."
+    },
+    {
+      "id": "ignition_leads_damp",
+      "conditions": {
+        "misfire_wet_weather": true
+      },
+      "system": "engine_ignition",
+      "severity": "low",
+      "diagnosis": "Misfires that are worse in wet weather suggest moisture-sensitive ignition leads or coil packs.",
+      "advice": "Inspect ignition leads and coils for cracks and moisture paths and consider replacement."
+    },
+    {
+      "id": "intake_backfire_timing",
+      "conditions": {
+        "backfire_intake": true
+      },
+      "system": "engine_ignition",
+      "severity": "medium",
+      "diagnosis": "Backfiring through the intake can be caused by incorrect ignition timing or lean misfire.",
+      "advice": "Driving should be limited until ignition timing and air–fuel mixture have been checked."
+    },
+    {
+      "id": "no_start_possible_ignition",
+      "conditions": {
+        "engine_cranks_no_start": true,
+        "smell_fuel_engine_bay": true
+      },
+      "system": "engine_ignition",
+      "severity": "high",
+      "diagnosis": "Strong fuel smell with cranking but no start suggests lack of spark rather than fuel.",
+      "advice": "Have the ignition system checked for spark at the plugs and possible crankshaft or camshaft sensor faults."
+    },
+    {
+      "id": "ignition_under_load_deep",
+      "conditions": {
+        "misfire_under_accel": true,
+        "hesitation_under_load": true,
+        "warning_check_engine": true,
+        "black_smoke_exhaust": false,
+        "smell_fuel_engine_bay": false
+      },
+      "system": "engine_ignition",
+      "severity": "medium",
+      "diagnosis": "Misfire and hesitation mainly under load with a check engine light, without black smoke or fuel smell, often indicates ignition weakness under load (coil, plugs, leads).",
+      "advice": "Avoid heavy acceleration and have ignition components and fault codes checked. Misfires under load can worsen and may damage the catalytic converter."
+    }
+  ]
+}

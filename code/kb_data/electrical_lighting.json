@@ -1,0 +1,63 @@
+{
+  "symptoms": [
+    {
+      "id": "headlights_dim",
+      "question": "Are the headlights noticeably dimmer than usual? (yes/no)"
+    },
+    {
+      "id": "lights_flicker",
+      "question": "Do the lights flicker while driving? (yes/no)"
+    },
+    {
+      "id": "indicator_not_working",
+      "question": "Is a turn indicator not working properly? (yes/no)"
+    },
+    {
+      "id": "multiple_electrical_issues",
+      "question": "Do you have multiple electrical issues at the same time (e.g., radio, windows, lights)? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "dim_headlights_battery_or_alternator",
+      "conditions": {
+        "headlights_dim": true,
+        "warning_battery_light": true
+      },
+      "system": "body_lighting_electrical",
+      "severity": "high",
+      "diagnosis": "Dim headlights with a battery warning light suggests charging system problems.",
+      "advice": "Turn off non-essential electrical loads and drive only to a safe place or a garage. The car may stop once the battery is depleted."
+    },
+    {
+      "id": "flicker_alternator_issue",
+      "conditions": {
+        "lights_flicker": true
+      },
+      "system": "body_lighting_electrical",
+      "severity": "medium",
+      "diagnosis": "Flickering lights can indicate alternator, voltage regulator, or poor electrical connection.",
+      "advice": "Have charging voltage and battery connections checked soon."
+    },
+    {
+      "id": "indicator_bulb_or_relay",
+      "conditions": {
+        "indicator_not_working": true
+      },
+      "system": "body_lighting_electrical",
+      "severity": "low",
+      "diagnosis": "A turn indicator not working is often caused by a bulb, fuse, or relay issue.",
+      "advice": "Check bulbs and fuses. Repair soon for road safety."
+    },
+    {
+      "id": "multiple_electrical_faults",
+      "conditions": {
+        "multiple_electrical_issues": true
+      },
+      "system": "body_lighting_electrical",
+      "severity": "medium",
+      "diagnosis": "Multiple electrical issues can indicate battery weakness, alternator issues, or a main grounding problem.",
+      "advice": "Have battery condition, alternator output and grounding connections checked."
+    }
+  ]
+}

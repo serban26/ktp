@@ -1,0 +1,90 @@
+{
+  "symptoms": [
+    {
+      "id": "vibration_high_speed",
+      "question": "Do you feel vibration mainly at higher speeds (e.g., 80-120 km/h)? (yes/no)"
+    },
+    {
+      "id": "vibration_low_speed",
+      "question": "Do you feel vibration already at low speeds (e.g., below 50 km/h)? (yes/no)"
+    },
+    {
+      "id": "steering_wobble_turning",
+      "question": "Does the steering wheel wobble or shake more when turning? (yes/no)"
+    },
+    {
+      "id": "tyre_wear_inner_outer",
+      "question": "Do your tyres show uneven wear on the inner or outer edges? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "wheel_balance_issue",
+      "conditions": {
+        "vibration_high_speed": true
+      },
+      "system": "wheel_tyre_system",
+      "severity": "low",
+      "diagnosis": "Likely wheel balance or alignment issue.",
+      "advice": "Vibration at higher speeds often comes from wheel balance or alignment. Driving is usually still possible, but have it checked to avoid uneven tyre wear."
+    },
+    {
+      "id": "bent_wheel_or_tyre_defect",
+      "conditions": {
+        "vibration_low_speed": true,
+        "vibration_high_speed": false
+      },
+      "system": "wheel_tyre_system",
+      "severity": "medium",
+      "diagnosis": "Vibration mainly at low speed can indicate a bent wheel or tyre defect.",
+      "advice": "Have the wheels and tyres inspected for damage, especially after hitting potholes or kerbs."
+    },
+    {
+      "id": "loose_suspension_component",
+      "conditions": {
+        "steering_wobble_turning": true
+      },
+      "system": "steering_suspension",
+      "severity": "high",
+      "diagnosis": "Steering wobble when turning can point to worn or loose suspension or steering components.",
+      "advice": "Have the suspension and steering checked soon to avoid worsening wear or safety issues."
+    },
+    {
+      "id": "wheel_alignment_issue",
+      "conditions": {
+        "tyre_wear_inner_outer": true
+      },
+      "system": "wheel_tyre_system",
+      "severity": "medium",
+      "diagnosis": "Uneven tyre edge wear usually indicates incorrect wheel alignment or suspension geometry.",
+      "advice": "Book a wheel alignment check to prevent premature tyre wear and possible pulling while driving."
+    },
+    {
+      "id": "wheel_alignment_complex",
+      "conditions": {
+        "vibration_high_speed": true,
+        "car_pulls_straight_line": true,
+        "tyre_wear_inner_outer": true,
+        "steering_wobble_turning": false,
+        "clunk_over_bumps": false
+      },
+      "system": "wheel_tyre_system",
+      "severity": "medium",
+      "diagnosis": "High-speed vibration together with pulling and uneven tyre edge wear points to wheel alignment and balancing rather than a loose suspension joint.",
+      "advice": "Drive cautiously and book a wheel alignment and balancing service soon. If pulling worsens or you notice new noises, stop and have the suspension checked."
+    },
+    {
+      "id": "tyre_defect_or_out_of_round",
+      "conditions": {
+        "vibration_low_speed": true,
+        "vibration_high_speed": true,
+        "tyre_wear_inner_outer": false,
+        "car_pulls_straight_line": false
+      },
+      "system": "wheel_tyre_system",
+      "severity": "medium",
+      "diagnosis": "Vibration at both low and high speeds without pulling or uneven edge wear can indicate an out-of-round tyre or tyre damage.",
+      "advice": "Inspect tyres for bulges, flat spots, or internal damage and have the wheels checked. Replace damaged tyres before longer trips."
+    }
+  ]
+}

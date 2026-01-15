@@ -1,0 +1,62 @@
+{
+  "symptoms": [
+    {
+      "id": "clunk_over_bumps",
+      "question": "Do you hear clunking noises when driving over bumps? (yes/no)"
+    },
+    {
+      "id": "steering_loose",
+      "question": "Does the steering feel loose or vague? (yes/no)"
+    },
+    {
+      "id": "steering_heavy",
+      "question": "Does the steering feel unusually heavy? (yes/no)"
+    },
+    {
+      "id": "car_pulls_straight_line",
+      "question": "Does the car pull to one side when driving straight? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "loose_suspension_clunk",
+      "conditions": {
+        "clunk_over_bumps": true
+      },
+      "system": "steering_suspension",
+      "severity": "medium",
+      "diagnosis": "Clunking over bumps can indicate worn suspension bushings, ball joints, or anti-roll bar links.",
+      "advice": "Drive carefully and book a suspension inspection soon to prevent worsening wear."
+    },
+    {
+      "id": "loose_steering_warning",
+      "conditions": {
+        "steering_loose": true
+      },
+      "system": "steering_suspension",
+      "severity": "high",
+      "diagnosis": "Loose steering can be caused by worn steering components and can be a safety concern.",
+      "advice": "Reduce speed and have the steering checked as soon as possible."
+    },
+    {
+      "id": "heavy_steering_issue",
+      "conditions": {
+        "steering_heavy": true
+      },
+      "system": "steering_suspension",
+      "severity": "medium",
+      "diagnosis": "Heavy steering can indicate power steering issues, low fluid, or mechanical steering resistance.",
+      "advice": "Check power steering fluid if applicable and have the system inspected soon."
+    },
+    {
+      "id": "pulling_alignment_or_brake",
+      "conditions": {
+        "car_pulls_straight_line": true
+      },
+      "system": "steering_suspension",
+      "severity": "medium",
+      "diagnosis": "Pulling to one side can be caused by alignment issues, tyre issues, or brake drag.",
+      "advice": "Check tyre pressures and book an alignment check. If pulling occurs mostly under braking, have brakes inspected."
+    }
+  ]
+}

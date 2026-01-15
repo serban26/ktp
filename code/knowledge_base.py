@@ -1,97 +1,127 @@
-SYMPTOMS = [
-    {
-        "id": "engine_cranks",
-        "question": "When you try to start the car, does the engine crank or turn over? (yes/no)"
-    },
-    {
-        "id": "dashboard_lights_bright",
-        "question": "When the ignition is on, are the dashboard lights bright and normal? (yes/no)"
-    },
-    {
-        "id": "warning_check_engine",
-        "question": "Is the check engine warning light on while driving? (yes/no)"
-    },
-    {
-        "id": "strange_brake_noise",
-        "question": "Do you hear a high-pitched squealing or grinding noise when braking? (yes/no)"
-    },
-    {
-        "id": "car_pulls_braking",
-        "question": "Does the car pull strongly to one side when braking? (yes/no)"
-    },
-    {
-        "id": "overheating_gauge_high",
-        "question": "Is the temperature gauge higher than normal or in the red zone? (yes/no)"
-    },
-    {
-        "id": "sweet_smell",
-        "question": "Do you notice a sweet smell inside or around the car, especially after driving? (yes/no)"
-    },
-    {
-        "id": "vibration_high_speed",
-        "question": "Do you feel vibration in the steering wheel at higher speeds (above 80 km/h)? (yes/no)"
-    }
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any, Dict, List
+
+
+# Determine paths to knowledge base data directory
+_BASE_DIR = Path(__file__).resolve().parent
+_KB_DIR = _BASE_DIR / "kb_data"
+
+
+def _load_module(name: str) -> Dict[str, Any]:
+    """
+    Load a knowledge base module from JSON file.
+    
+    Args:
+        name (str): The module name (without .json extension).
+                   Should correspond to a file in the kb_data directory.
+    
+    Returns:
+        Dict[str, Any]: The parsed JSON content as a dictionary.
+                       Expected to contain 'systems', 'symptoms', and/or 'rules' keys.
+    
+    Raises:
+        FileNotFoundError: If the module file doesn't exist.
+        json.JSONDecodeError: If the file contains invalid JSON.
+    
+    Examples:
+        >>> data = _load_module("brakes")
+        >>> "symptoms" in data
+        True
+    """
+    path = _KB_DIR / f"{name}.json"
+    with path.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+# List of all knowledge base modules to load
+# Each module covers a different car system or category
+_MODULE_NAMES = [
+    "general",              # General symptoms and rules
+    "engine_ignition",      # Ignition system issues
+    "engine_fuel",          # Fuel delivery problems
+    "engine_mechanical",    # Mechanical engine issues
+    "cooling",              # Cooling system problems
+    "brakes",               # Brake system issues
+    "wheels",               # Tire and wheel problems
+    "steering_suspension",  # Steering and suspension issues
+    "transmission",         # Transmission problems
+    "climate_ac",           # Climate control and A/C
+    "electrical_lighting",  # Electrical and lighting issues
 ]
 
-RULES = [
-    {
-        "id": "battery_issue",
-        "conditions": {
-            "engine_cranks": False,
-            "dashboard_lights_bright": False
-        },
-        "diagnosis": "Likely battery or battery connection problem.",
-        "advice": "Do not attempt to keep starting the car. Check battery terminals and call roadside assistance or a garage."
-    },
-    {
-        "id": "starter_issue",
-        "conditions": {
-            "engine_cranks": False,
-            "dashboard_lights_bright": True
-        },
-        "diagnosis": "Possible starter motor or ignition circuit issue.",
-        "advice": "The electrical system appears to have power but the engine does not crank. It is safer to have the car inspected by a mechanic."
-    },
-    {
-        "id": "engine_running_with_check_light",
-        "conditions": {
-            "engine_cranks": True,
-            "warning_check_engine": True
-        },
-        "diagnosis": "Engine control system has detected a fault.",
-        "advice": "The car may still be drivable, but avoid hard acceleration and have the fault code read at a garage as soon as possible."
-    },
-    {
-        "id": "brake_pads_worn",
-        "conditions": {
-            "strange_brake_noise": True
-        },
-        "diagnosis": "Brake pads or discs may be worn.",
-        "advice": "Continuous squealing or grinding when braking suggests worn pads or discs. Reduce driving and book a brake inspection soon."
-    },
-    {
-        "id": "brake_imbalance",
-        "conditions": {
-            "car_pulls_braking": True
-        },
-        "diagnosis": "Possible brake imbalance or sticking brake on one side.",
-        "advice": "Pulling to one side while braking can be dangerous. Avoid high-speed driving and visit a garage as soon as possible."
-    },
-    {
-        "id": "coolant_leak",
-        "conditions": {
-            "overheating_gauge_high": True,
-            "sweet_smell": True
-        },
-        "diagnosis": "Possible coolant leak or overheating problem.",
-        "advice": "Do not continue driving with an overheating engine. Stop safely, allow the engine to cool, and contact roadside assistance or a garage."
-    },
-    {
-        "id": "wheel_balance_issue",
-        "conditions": {
-            "vibration_high_speed": True
-        },
-        "diagnosis": "Likely wheel balance or alignment issue.",
-        "advice": "Vibration at higher speeds often comes from wheel balance or alignment. Driving is usually still possible, but have it checked to avoid uneven tyre wear."
-    }
-]
+
+# Main knowledge base collections
+# These are populated by loading all modules below
+CAR_SYSTEMS: List[Dict[str, Any]] = []      # Car system definitions (e.g., brakes, engine)
+SYMPTOMS: List[Dict[str, Any]] = []         # Observable symptoms to query
+ORIGINAL_RULES: List[Dict[str, Any]] = []   # Original diagnostic rules
+RULES: List[Dict[str, Any]] = []            # Processed rules for inference engine
+DIAGNOSIS_RULES: List[Dict[str, Any]] = []  # Rules that produce diagnoses
+
+
+# Track seen IDs to prevent duplicates across modules
+_seen_system_ids = set()
+_seen_symptom_ids = set()
+_seen_rule_ids = set()
+
+
+# Load all knowledge base modules
+for module_name in _MODULE_NAMES:
+    data = _load_module(module_name)
+
+    # Add car systems (with duplicate prevention)
+    for system in data.get("systems", []):
+        system_id = system["id"]
+        if system_id not in _seen_system_ids:
+            CAR_SYSTEMS.append(system)
+            _seen_system_ids.add(system_id)
+
+    # Add symptoms (with duplicate prevention)
+    for symptom in data.get("symptoms", []):
+        symptom_id = symptom["id"]
+        if symptom_id not in _seen_symptom_ids:
+            SYMPTOMS.append(symptom)
+            _seen_symptom_ids.add(symptom_id)
+
+    # Add rules (with duplicate prevention)
+    for rule in data.get("rules", []):
+        rule_id = rule["id"]
+        if rule_id not in _seen_rule_ids:
+            ORIGINAL_RULES.append(rule)
+            _seen_rule_ids.add(rule_id)
+
+
+# Process rules: separate diagnostic conclusions from inference rules
+# Diagnostic rules need special handling for the forward chaining engine
+for rule in ORIGINAL_RULES:
+    # Check if rule has diagnostic output (conclusion)
+    has_conclusion = "diagnosis" in rule or "advice" in rule or "severity" in rule
+    # Check if rule produces intermediate facts
+    has_actions = "produces" in rule or "sets" in rule
+    
+    if has_conclusion and not has_actions:
+        # Create an evidence fact for forward chaining
+        # This allows the inference engine to track confirmed diagnoses
+        evidence_fact = f"evidence::{rule['id']}"
+        evidence_rule = dict(rule)
+        evidence_rule["produces"] = {evidence_fact: True}
+        evidence_rule["evidence_fact"] = evidence_fact
+        RULES.append(evidence_rule)
+
+        # Create separate diagnosis rule for final output
+        diagnosis_rule: Dict[str, Any] = {
+            "id": f"diagnosis__{rule['id']}",
+            "conditions": {evidence_fact: True},
+            "system": rule.get("system"),
+            "severity": rule.get("severity"),
+            "diagnosis": rule.get("diagnosis"),
+            "advice": rule.get("advice"),
+            "source_rule": rule.get("id"),
+        }
+        DIAGNOSIS_RULES.append(diagnosis_rule)
+    else:
+        # Rule produces intermediate facts or has no conclusion
+        RULES.append(rule)

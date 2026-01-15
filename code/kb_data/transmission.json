@@ -1,0 +1,64 @@
+{
+  "symptoms": [
+    {
+      "id": "gear_slipping",
+      "question": "Does the car feel like it slips out of gear or revs rise without speed increasing? (yes/no)"
+    },
+    {
+      "id": "clutch_smell",
+      "question": "Do you notice a burning smell like clutch material? (yes/no)"
+    },
+    {
+      "id": "difficulty_shifting",
+      "question": "Is it difficult to shift gears (hard to engage gears)? (yes/no)"
+    },
+    {
+      "id": "transmission_noise",
+      "question": "Do you hear whining or grinding noises from the transmission area? (yes/no)"
+    }
+  ],
+  "rules": [
+    {
+      "id": "clutch_slipping",
+      "conditions": {
+        "gear_slipping": true,
+        "clutch_smell": true
+      },
+      "system": "transmission_clutch",
+      "severity": "high",
+      "diagnosis": "Gear slipping with a burning smell suggests a slipping clutch.",
+      "advice": "Avoid driving if possible. Continued driving can cause complete clutch failure. Book a repair urgently."
+    },
+    {
+      "id": "gear_slipping_general",
+      "conditions": {
+        "gear_slipping": true,
+        "clutch_smell": false
+      },
+      "system": "transmission_clutch",
+      "severity": "medium",
+      "diagnosis": "Gear slipping can indicate clutch wear or transmission problems.",
+      "advice": "Drive gently and have the clutch/transmission inspected soon."
+    },
+    {
+      "id": "hard_to_shift",
+      "conditions": {
+        "difficulty_shifting": true
+      },
+      "system": "transmission_clutch",
+      "severity": "medium",
+      "diagnosis": "Difficulty shifting can indicate clutch adjustment issues, linkage problems, or transmission wear.",
+      "advice": "Avoid forcing gears and book an inspection to prevent further damage."
+    },
+    {
+      "id": "transmission_noise_issue",
+      "conditions": {
+        "transmission_noise": true
+      },
+      "system": "transmission_clutch",
+      "severity": "high",
+      "diagnosis": "Whining or grinding noises from the transmission can indicate low fluid or internal wear.",
+      "advice": "Limit driving and have transmission fluid level and condition checked. Continued driving may cause major damage."
+    }
+  ]
+}
